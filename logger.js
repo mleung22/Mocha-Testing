@@ -20,14 +20,14 @@ function logger(config) {
 logger.prototype = {
 
     log(data, level) {
+
         this.level = level;
         this.data = data;
 
         const logObj = this.createLogObject();
-
         const message = this.format(logObj);
 
-        this.transport(level, message);
+        return this.transport(level, message);
     },
 
     createLogObject() {
@@ -51,21 +51,37 @@ logger.prototype = {
     transport(level, message) {
         const chalk = require('chalk');
 
-        if (level == 'error') {
+        level = level !== undefined ? level.toLowerCase() : '';
+
+        switch(level){
+
+          case 'error':
+
             console.log(chalk.red(message));
-        }
-        else if (level == 'warning') {
+
+            return chalk.red(message);
+
+          case 'warning':
+
             console.log(chalk.yellow(message));
-        }
-        else if (level == 'debug') {
+
+            return chalk.yellow(message);
+
+          case 'debug':
+
             console.log(chalk.blue(message));
-        }
-        else {
-            //the default is info
+
+            return chalk.blue(message);
+
+          default:
+
             console.log(chalk.green(message));
+
+            return chalk.green(message);
+
         }
 
     }
-}
+};
 
 module.exports = { logger, LEVELS };
